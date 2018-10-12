@@ -43,6 +43,24 @@ class Entity:
                 self.item=item
                 self.item.owner=self 
 
+    def to_json(self):
+        json_data={
+            'x':self.x,
+            'y':self.y,
+            'char':self.char,
+            'colour':[self.colour.r,self.colour.g,self.colour.b],
+            'name':self.name,
+            'render_order':self.render_order.value,
+            'fighter':self.fighter.to_json(),
+            'ai':self.ai.to_json(),
+            'item':self.item.to_json(),
+            'inventory':self.inventory.to_json(),
+            'stairs':self.stairs.to_json(),
+            'equipment':self.equipment.to_json,
+            'level':self.level.to_json(),
+            'equip':self.equip.to_json()
+        }
+
     def move(self,dx,dy):
         self.x+=dx
         self.y+=dy

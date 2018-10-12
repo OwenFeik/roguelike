@@ -36,6 +36,27 @@ class Fighter:
         
         return self.base_defense+bonus
 
+    def to_json(self):
+        json_data={
+            'base_max_health':self.base_max_health,
+            'health':self.health,
+            'base_defense':self.base_defense,
+            'base_power':self.base_power,
+            'xp':self.xp
+        }
+
+    @staticmethod
+    def from_json(json_data):
+        base_max_health=json_data.get('base_max_health')
+        health=json_data.get('health')
+        base_defense=json_data.get('base_defense')
+        base_power=json_data.get('base_power')
+        xp=json_data.get('xp')
+        
+        fighter_component=Fighter(base_max_health,base_defense,base_power,xp)
+        fighter_component.health=health
+        
+        return fighter_component
 
     def take_damage(self,amount):
         results=[]
