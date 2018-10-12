@@ -13,7 +13,7 @@ from menus import main_menu,message_box
 def main():
     constants=get_constants()
 
-    lc.console_set_custom_font('spritesheet.png',lc.FONT_TYPE_GREYSCALE | lc.FONT_LAYOUT_TCOD)
+    lc.console_set_custom_font('resources/spritesheet.png',lc.FONT_TYPE_GREYSCALE | lc.FONT_LAYOUT_TCOD)
     lc.console_init_root(constants['screen_width'],constants['screen_height'],constants['window_title'],False)
 
     con=lc.console_new(constants['screen_width'],constants['screen_height'])
@@ -28,7 +28,7 @@ def main():
     show_main_menu=True
     show_load_error_message=False
 
-    main_menu_background_image=lc.image_load('menu_background.png')
+    main_menu_background_image=lc.image_load('resources/menu_background.png')
 
     key=lc.Key()
     mouse=lc.Mouse()
