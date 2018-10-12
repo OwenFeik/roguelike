@@ -3,3 +3,6 @@
 /libtcodpy/__pycache__
 /loader_functions/__pycache__
 /map_objects/__pycache__
+savegame.bak
+savegame.dat
+savegame.dir
