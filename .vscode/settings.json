@@ -1,0 +1,7 @@
+{
+    "python.linting.pylintArgs": [
+        "--disable=E1101",
+        "--diable=C"
+    ],
+    "python.linting.enabled": true
+}
