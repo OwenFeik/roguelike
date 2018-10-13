@@ -83,22 +83,15 @@ class Equipment:
     def to_json(self):
 
         json_data={}
-        if self.head:
-            json_data['head']=self.head.to_json()
-        if self.neck:
-            json_data['neck']=self.neck.to_json()
-        if self.chest:
-            json_data['chest']=self.chest.to_json()
-        if self.hands:
-            json_data['hands']=self.hands.to_json()
-        if self.ring:
-            json_data['ring']=self.ring.to_json()
-        if self.main_hand:
-            json_data['main_hand']=self.main_hand.to_json()
-        if self.off_hand:
-            json_data['off_hand']=self.off_hand.to_json()
-        if self.legs:
-            json_data['legs']=self.legs.to_json()
+        
+        if self.head: json_data['head']=self.head.to_json()
+        if self.neck: json_data['neck']=self.neck.to_json()
+        if self.chest: json_data['chest']=self.chest.to_json()
+        if self.hands: json_data['hands']=self.hands.to_json()
+        if self.ring: json_data['ring']=self.ring.to_json()
+        if self.main_hand: json_data['main_hand']=self.main_hand.to_json()
+        if self.off_hand: json_data['off_hand']=self.off_hand.to_json()
+        if self.legs: json_data['legs']=self.legs.to_json()
         
         return json_data
 
@@ -115,22 +108,16 @@ class Equipment:
         legs_json=json_data.get('legs')
 
         equipment=Equipment()
-        if head_json:
-            equipment.head=entity.Entity.from_json(head_json)
-        if neck_json:
-            equipment.neck=entity.Entity.from_json(neck_json)
-        if chest_json:
-            equipment.chest=entity.Entity.from_json(chest_json)
-        if hands_json:
-            equipment.hands=entity.Entity.from_json(hands_json)
-        if ring_json:
-            equipment.ring=entity.Entity.from_json(ring_json)
-        if main_hand_json:
-            equipment.main_hand=entity.Entity.from_json(main_hand_json)
-        if off_hand_json:
-            equipment.off_hand=entity.Entity.from_json(off_hand_json)
-        if legs_json:
-            equipment.legs=entity.Entity.from_json(legs_json)
+        
+        if head_json: equipment.head=entity.Entity.from_json(head_json)
+        if neck_json: equipment.neck=entity.Entity.from_json(neck_json)
+        if chest_json: equipment.chest=entity.Entity.from_json(chest_json)
+        if hands_json: equipment.hands=entity.Entity.from_json(hands_json)
+        if ring_json: equipment.ring=entity.Entity.from_json(ring_json)
+        if main_hand_json: equipment.main_hand=entity.Entity.from_json(main_hand_json)
+        if off_hand_json: equipment.off_hand=entity.Entity.from_json(off_hand_json)
+        if legs_json: equipment.legs=entity.Entity.from_json(legs_json)
+        
         return equipment
 
 
