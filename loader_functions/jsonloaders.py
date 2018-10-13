@@ -1,4 +1,5 @@
 import json
+import libtcodpy as lc
 
 from entity import Entity
 from gamemessages import MessageLog
@@ -33,3 +34,16 @@ def json_load_game():
     game_state=GameStates(game_state_json)
 
     return player,entities,game_map,message_log,game_state
+
+def json_get_constants():
+    with open('resources/constants.json','r') as constants_file:
+        constants=json.load(constants_file)
+    with open('resources/colours.json','r') as colours_file:
+        colours_json=json.load(colours_file)
+    
+    colours={}
+    for colour in colours_json:
+        colours[colour]=lc.Color(colours_json[colour][0],colours_json[colour][1],colours_json[colour][2])
+    constants['colours']=colours
+    
+    return constants

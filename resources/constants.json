@@ -1,0 +1,21 @@
+{
+    "window_title": "roguelike",
+    "screen_width": 80,
+    "screen_height": 50,
+    "bar_width": 20,
+    "panel_height": 7,
+    "panel_y": 43,
+    "message_x": 22,
+    "message_width": 58,
+    "message_height": 6,
+    "map_width": 80,
+    "map_height": 43,
+    "room_max_size": 8,
+    "room_min_size": 3,
+    "max_rooms": 30,
+    "fov_algorithm": 0,
+    "fov_light_walls": true,
+    "fov_radius": 5,
+    "max_enemies_per_room": 3,
+    "max_items_per_room": 2
+}

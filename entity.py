@@ -54,45 +54,14 @@ class Entity:
                 self.item.owner=self 
 
     def to_json(self):
-        if self.fighter:
-            fighter=self.fighter.to_json()
-        else:
-            fighter=None
-        
-        if self.ai:
-            ai=self.ai.to_json()
-        else:
-            ai=None
-
-        if self.item:
-            item=self.item.to_json()
-        else:
-            item=None
-
-        if self.inventory:
-            inventory=self.inventory.to_json()
-        else:
-            inventory=None
-        
-        if self.stairs:
-            stairs=self.stairs.to_json()
-        else:
-            stairs=None
-
-        if self.equipment:
-            equipment=self.equipment.to_json()
-        else:
-            equipment=None
-
-        if self.level:
-            level=self.level.to_json()
-        else:
-            level=None
-
-        if self.equip:
-            equip=self.equip.to_json()
-        else:
-            equip=None
+        fighter=self.fighter.to_json() if self.fighter else None
+        ai=self.ai.to_json() if self.ai else None
+        item=self.item.to_json() if self.item else None
+        inventory=self.inventory.to_json() if self.inventory else None
+        stairs=self.stairs.to_json() if self.stairs else None
+        equipment=self.equipment.to_json() if self.equipment else None
+        level=self.level.to_json() if self.level else None
+        equip=self.equip.to_json() if self.equip else None
         
         json_data={
             'x':self.x,
@@ -123,45 +92,14 @@ class Entity:
         blocks=json_data.get('blocks')
         render_order=RenderOrder(json_data.get('render_order'))
 
-        if json_data.get('fighter'):
-            fighter=Fighter.from_json(json_data.get('fighter'))
-        else:
-            fighter=None
-            
-        if json_data.get('ai'):
-            ai=ai_from_json(json_data.get('ai'))
-        else:
-            ai=None
-
-        if json_data.get('item'):
-            item=Item.from_json(json_data.get('item'))
-        else:
-            item=None
-        
-        if json_data.get('inventory'):
-            inventory=Inventory.from_json(json_data.get('inventory'))
-        else:
-            inventory=None
-
-        if json_data.get('stairs'):
-            stairs=Stairs.from_json(json_data.get('stairs'))
-        else:
-            stairs=None
-        
-        if json_data.get('equipment'):
-            equipment=Equipment.from_json(json_data.get('equipment'))
-        else:
-            equipment=None
-
-        if json_data.get('level'):
-            level=Level.from_json(json_data.get('level'))
-        else:
-            level=None
-
-        if json_data.get('equip'):
-            equip=Equip.from_json(json_data.get('equip'))
-        else:
-            equip=None
+        fighter=Fighter.from_json(json_data.get('fighter')) if json_data.get('fighter') else None
+        ai=ai_from_json(json_data.get('ai')) if json_data.get('ai') else None            
+        item=Item.from_json(json_data.get('item')) if json_data.get('item') else None
+        inventory=Inventory.from_json(json_data.get('inventory')) if json_data.get('inventory') else None
+        stairs=Stairs.from_json(json_data.get('stairs')) if json_data.get('stairs') else None
+        equipment=Equipment.from_json(json_data.get('equipment')) if json_data.get('equipment') else None
+        level=Level.from_json(json_data.get('level')) if json_data.get('level') else None
+        equip=Equip.from_json(json_data.get('equip')) if json_data.get('equip') else None
 
         return Entity(x,y,char,colour,name,blocks,render_order,fighter,ai,item,inventory,stairs,level,equipment,equip)
 
