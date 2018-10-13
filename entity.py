@@ -1,9 +1,19 @@
 import math
 import libtcodpy as lc
 from renderfunctions import RenderOrder
+from components.ai import ai_from_json
+from components.equip import Equip
+from components.equipment import Equipment
+from components.fighter import Fighter
+from components.inventory import Inventory
 from components.item import Item
+from components.level import Level
+from components.stairs import Stairs
+
+
 
 #TODO: refactor initialisation to allow passing of a *args of components
+#TODO: 1 line if statements in JSON functions
 
 class Entity:
     def __init__(self,x,y,char,colour,name,blocks=False,render_order=RenderOrder.CORPSE,fighter=None,ai=None,item=None,inventory=None,stairs=None,level=None,equipment=None,equip=None):
@@ -44,22 +54,116 @@ class Entity:
                 self.item.owner=self 
 
     def to_json(self):
+        if self.fighter:
+            fighter=self.fighter.to_json()
+        else:
+            fighter=None
+        
+        if self.ai:
+            ai=self.ai.to_json()
+        else:
+            ai=None
+
+        if self.item:
+            item=self.item.to_json()
+        else:
+            item=None
+
+        if self.inventory:
+            inventory=self.inventory.to_json()
+        else:
+            inventory=None
+        
+        if self.stairs:
+            stairs=self.stairs.to_json()
+        else:
+            stairs=None
+
+        if self.equipment:
+            equipment=self.equipment.to_json()
+        else:
+            equipment=None
+
+        if self.level:
+            level=self.level.to_json()
+        else:
+            level=None
+
+        if self.equip:
+            equip=self.equip.to_json()
+        else:
+            equip=None
+        
         json_data={
             'x':self.x,
             'y':self.y,
             'char':self.char,
             'colour':[self.colour.r,self.colour.g,self.colour.b],
             'name':self.name,
+            'blocks':self.blocks,
             'render_order':self.render_order.value,
-            'fighter':self.fighter.to_json(),
-            'ai':self.ai.to_json(),
-            'item':self.item.to_json(),
-            'inventory':self.inventory.to_json(),
-            'stairs':self.stairs.to_json(),
-            'equipment':self.equipment.to_json,
-            'level':self.level.to_json(),
-            'equip':self.equip.to_json()
+            'fighter':fighter,
+            'ai':ai,
+            'item':item,
+            'inventory':inventory,
+            'stairs':stairs,
+            'equipment':equipment,
+            'level':level,
+            'equip':equip
         }
+        return json_data
+
+    @staticmethod
+    def from_json(json_data):
+        x=json_data.get('x')
+        y=json_data.get('y')
+        char=json_data.get('char')
+        colour=lc.Color(json_data.get('colour')[0],json_data.get('colour')[1],json_data.get('colour')[2])
+        name=json_data.get('name')
+        blocks=json_data.get('blocks')
+        render_order=RenderOrder(json_data.get('render_order'))
+
+        if json_data.get('fighter'):
+            fighter=Fighter.from_json(json_data.get('fighter'))
+        else:
+            fighter=None
+            
+        if json_data.get('ai'):
+            ai=ai_from_json(json_data.get('ai'))
+        else:
+            ai=None
+
+        if json_data.get('item'):
+            item=Item.from_json(json_data.get('item'))
+        else:
+            item=None
+        
+        if json_data.get('inventory'):
+            inventory=Inventory.from_json(json_data.get('inventory'))
+        else:
+            inventory=None
+
+        if json_data.get('stairs'):
+            stairs=Stairs.from_json(json_data.get('stairs'))
+        else:
+            stairs=None
+        
+        if json_data.get('equipment'):
+            equipment=Equipment.from_json(json_data.get('equipment'))
+        else:
+            equipment=None
+
+        if json_data.get('level'):
+            level=Level.from_json(json_data.get('level'))
+        else:
+            level=None
+
+        if json_data.get('equip'):
+            equip=Equip.from_json(json_data.get('equip'))
+        else:
+            equip=None
+
+        return Entity(x,y,char,colour,name,blocks,render_order,fighter,ai,item,inventory,stairs,level,equipment,equip)
 
     def move(self,dx,dy):
         self.x+=dx

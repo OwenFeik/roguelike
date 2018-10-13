@@ -9,14 +9,14 @@ class Message:
     def to_json(self):
         json_data={
             'text':self.text,
-            'colour':self.colour
+            'colour':[self.colour.r,self.colour.g,self.colour.b]
         }
         return json_data
     
     @staticmethod
     def from_json(json_data):
         text=json_data.get('text')
-        colour=json_data.get('colour')
+        colour=lc.Color(json_data.get('colour')[0],json_data.get('colour')[1],json_data.get('colour')[2])
 
         if colour:
             message=Message(text,colour)

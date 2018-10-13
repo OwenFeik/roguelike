@@ -44,7 +44,8 @@ class Fighter:
             'base_power':self.base_power,
             'xp':self.xp
         }
-
+        return json_data
+        
     @staticmethod
     def from_json(json_data):
         base_max_health=json_data.get('base_max_health')

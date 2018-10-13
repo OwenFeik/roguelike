@@ -49,7 +49,7 @@ class ConfusedMonster:
 
         return results
 
-def from_json(json_data):
+def ai_from_json(json_data):
     ai=globals()[json_data.get('ai')]
     if ai==BasicMonster:
         return BasicMonster()

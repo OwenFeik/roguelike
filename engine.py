@@ -10,6 +10,8 @@ from loader_functions.initnewgame import get_constants,get_game_variables
 from loader_functions.dataloaders import load_game,save_game
 from menus import main_menu,message_box
 
+from loader_functions.jsonloaders import json_save_game,json_load_game
+
 def main():
     constants=get_constants()
 
@@ -56,7 +58,10 @@ def main():
                 show_main_menu=False
             elif load_saved_game:
                 try:
-                    player,entities,game_map,message_log,game_state=load_game()
+                    # try:
+                    player,entities,game_map,message_log,game_state=json_load_game()
+                    # except:
+                    # player,entities,game_map,message_log,game_state=load_game()
                     show_main_menu=False
                 except FileNotFoundError:
                     show_load_error_message=True
@@ -207,6 +212,7 @@ def play_game(player,entities,game_map,message_log,game_state,con,panel,constant
             else:
                 if not game_state==GameStates.PLAYER_DEAD:
                     save_game(player,entities,game_map,message_log,game_state)
+                    json_save_game(player,entities,game_map,message_log,game_state)
                 return True
         
         if fullscreen:

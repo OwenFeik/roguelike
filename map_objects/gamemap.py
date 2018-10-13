@@ -22,24 +22,25 @@ class GameMap:
         self.floor=floor
 
     def to_json(self):
-       json_data={
-           'width':self.width,
-           'height':self.height,
-           'tiles':[[tile.to_json() for tile in tile_row] for tile_row in self.tiles],
-           'floor':self.floor
-       }
+        json_data={
+            'width':self.width,
+            'height':self.height,
+            'tiles':[[tile.to_json() for tile in tile_row] for tile_row in self.tiles],
+            'floor':self.floor
+        }
+        return json_data
 
     @staticmethod
     def from_json(json_data):
-       width=json_data.get('width')
-       height=json_data.get('height')
-       tiles_json=json_data.get('tiles')
-       floor=json_data.get('floor')
+        width=json_data.get('width')
+        height=json_data.get('height')
+        tiles_json=json_data.get('tiles')
+        floor=json_data.get('floor')
 
-       game_map=GameMap(width,height,floor)
-       game_map.tiles=Tile.from_json(tiles_json)
+        game_map=GameMap(width,height,floor)
+        game_map.tiles=[[Tile.from_json(tile_json) for tile_json in tile_row_json] for tile_row_json in tiles_json]
 
-       return game_map
+        return game_map
     
     def initialise_tiles(self):
         tiles=[[Tile(True) for y in range(self.height)]for x in range(self.width)]

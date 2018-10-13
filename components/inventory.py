@@ -1,10 +1,27 @@
 import libtcodpy as lc
+import entity
 from gamemessages import Message
+
 
 class Inventory:
     def __init__(self,capacity):
         self.capacity=capacity
         self.items=[]
+
+    def to_json(self):
+        json_data={
+            'capacity':self.capacity,
+            'items':[item.to_json() for item in self.items]
+        }
+        return json_data
+
+    @staticmethod
+    def from_json(json_data):
+        capacity=json_data.get('capacity')
+        items=[entity.Entity.from_json(item) for item in json_data.get('items')]
+        inventory=Inventory(capacity)
+        inventory.items=items
+        return inventory
 
     def add_item(self,item):
         results=[]

@@ -9,6 +9,23 @@ class Level:
     def experience_to_next_level(self):
         return self.level_up_base+self.current_level*self.level_up_factor
 
+    def to_json(self):
+        json_data={
+            'current_level':self.current_level,
+            'current_xp':self.current_xp,
+            'level_up_base':self.level_up_base,
+            'level_up_factor':self.level_up_factor
+        }
+        return json_data
+    
+    @staticmethod
+    def from_json(json_data):
+        current_level=json_data.get('current_level')
+        current_xp=json_data.get('current_xp')
+        level_up_base=json_data.get('level_up_base')
+        level_up_factor=json_data.get('level_up_factor')
+        return Level(current_level,current_xp,level_up_base,level_up_factor)
+
     def add_xp(self,amount):
         self.current_xp+=amount
 
