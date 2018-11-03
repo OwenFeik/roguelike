@@ -77,3 +77,20 @@ def character_screen(player,character_screen_width,character_screen_height,scree
     y=screen_height//2-character_screen_height//2
 
     lc.console_blit(window,0,0,character_screen_width,character_screen_height,0,x,y,1.0,0.7)
+
+def loading_bar(con,header,progress,screen_width,screen_height):
+    x=screen_width//4 #Starts a quarter of the way across the screen
+    y=screen_height//4 #Quarter of the way down the screen
+    width=screen_width//2 #Half the width of the screen
+    height=4
+
+    window=lc.console_new(width,4) # Create loading bar window
+    lc.console_set_default_foreground(window,lc.white)
+    lc.console_print_rect_ex(window,0,1,screen_width//2,4,lc.BKGND_NONE,lc.LEFT,header)
+
+    for pos in range(0,int(width*progress)): # Set achieved progress to white
+        lc.console_set_char_background(window,pos,2,lc.white)
+    for pos in range(int(width*progress),width): # Set remaining space to grey
+        lc.console_set_char_background(window,pos,2,lc.light_grey)
+
+    lc.console_blit(window,0,0,width,height,0,x,y,1.0,1.0) #Blit changes

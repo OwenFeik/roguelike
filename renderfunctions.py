@@ -1,7 +1,7 @@
 import libtcodpy as lc
 from enum import Enum,auto
 from gamestates import GameStates
-from menus import inventory_menu,level_up_menu,character_screen
+from menus import inventory_menu,level_up_menu,character_screen,loading_bar
 
 class RenderOrder(Enum):
     STAIRS=auto()
@@ -33,6 +33,7 @@ def render_bar(panel,x,y,total_width,name,value,maximum,bar_colour,back_colour):
     lc.console_print_ex(panel,int(x+total_width/2),y,lc.BKGND_NONE,lc.CENTER,'{0}: {1}/{2}'.format(name,value,maximum))
 
 def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_log,screen_width,screen_height,bar_width,panel_height,panel_y,mouse,colours,game_state):
+    
     if fov_recompute:
         for y in range(game_map.height):
             for x in range(game_map.width):
@@ -40,16 +41,10 @@ def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_
                 wall=game_map.tiles[x][y].block_sight
 
                 if visible:
-                    if wall:
-                        lc.console_set_char_background(con,x,y,colours.get('light-wall'),lc.BKGND_SET)
-                    else:
-                        lc.console_set_char_background(con,x,y,colours.get('light-ground'),lc.BKGND_SET)
+                    lc.console_set_char_background(con,x,y,colours.get('light-'+game_map.tiles[x][y].terrain),lc.BKGND_SET)
                     game_map.tiles[x][y].explored=True
                 elif game_map.tiles[x][y].explored:
-                    if wall:
-                        lc.console_set_char_background(con,x,y,colours.get('dark-wall'),lc.BKGND_SET)
-                    else:
-                        lc.console_set_char_background(con,x,y,colours.get('dark-ground'),lc.BKGND_SET)
+                    lc.console_set_char_background(con,x,y,colours.get('dark-'+game_map.tiles[x][y].terrain),lc.BKGND_SET)
 
     entities_in_render_order=sorted(entities,key=lambda x:x.render_order.value)
     for entity in entities_in_render_order:
@@ -91,8 +86,12 @@ def clear_all(con,entities):
         clear_entity(con,entity)
 
 def draw_entity(con,entity,fov_map,game_map):
-    if lc.map_is_in_fov(fov_map,entity.x,entity.y)or(entity.stairs and game_map.tiles[entity.x][entity.y].explored):
+    if lc.map_is_in_fov(fov_map,entity.x,entity.y):
         lc.console_set_default_foreground(con,entity.colour)
+        lc.console_put_char(con,entity.x,entity.y,entity.char,lc.BKGND_NONE)
+    elif entity.stairs and game_map.tiles[entity.x][entity.y].explored:
+        dim_colour=lc.Color(entity.colour.r//2,entity.colour.g//2,entity.colour.b//2)
+        lc.console_set_default_foreground(con,dim_colour)
         lc.console_put_char(con,entity.x,entity.y,entity.char,lc.BKGND_NONE)
 
 def clear_entity(con,entity):

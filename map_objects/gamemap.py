@@ -1,7 +1,7 @@
 import libtcodpy as lc
 from random import randint
 from map_objects.tile import Tile
-from map_objects.rectangle import Rect
+from map_objects.room import Room
 from entity import Entity
 from components.ai import BasicMonster
 from components.fighter import Fighter
@@ -13,6 +13,7 @@ from itemfunctions import heal,cast_lightning,cast_fireball,cast_confuse
 from renderfunctions import RenderOrder
 from gamemessages import Message
 from randomutils import random_choice_from_dict,from_dungeon_floor
+import loader_functions.jsonloaders
 
 class GameMap:
     def __init__(self,width,height,floor=0):
@@ -43,7 +44,7 @@ class GameMap:
         return game_map
     
     def initialise_tiles(self):
-        tiles=[[Tile(True) for y in range(self.height)]for x in range(self.width)]
+        tiles=[[Tile(True,'wall') for y in range(self.height)]for x in range(self.width)]
         return tiles
 
     def make_map(self,max_rooms,room_min_size,room_max_size,map_width,map_height,player,entities):
@@ -60,13 +61,13 @@ class GameMap:
             x=randint(0,map_width-w-1)
             y=randint(0,map_height-h-1)
 
-            new_room=Rect(x,y,w,h)
+            new_room=Room(x,y,w,h)
 
             for other_room in rooms:
                 if new_room.intersect(other_room):
                     break
             else:
-                self.create_room(new_room)
+                self.place_room(new_room)
                 (new_x,new_y)=new_room.center()
 
                 center_of_last_room_x=new_x
@@ -92,21 +93,44 @@ class GameMap:
         down_stairs=Entity(center_of_last_room_x,center_of_last_room_y,'>',lc.white,'Stairs',render_order=RenderOrder.STAIRS,stairs=stairs_component)
         entities.append(down_stairs)
 
-    def create_room(self,room):
-        for x in range(room.x1+1,room.x2):
-            for y in range(room.y1+1,room.y2):
-                self.tiles[x][y].blocked=False
-                self.tiles[x][y].block_sight=False
+        #Check to make sure a path exists from the player to the down stairs
+        fov_map=lc.map_new(self.width,self.height)
+        for y in range(0,self.height):
+            for x in range(0,self.width):
+                lc.map_set_properties(fov_map,x,y,True,not self.tiles[x][y].blocked)
+        lc.map_compute_fov(fov_map,0,0,100,True,0)
+        path=lc.path_new_using_map(fov_map,1)
+        lc.path_compute(path,player.x,player.y,down_stairs.x,down_stairs.y)
+
+        if lc.path_is_empty(path): #If no path exists, make a tunnel to the down stairs
+            if randint(0,1)==1:
+                self.create_h_tunnel(down_stairs.x,player.x,down_stairs.y)
+                self.create_v_tunnel(down_stairs.y,player.y,player.x)
+            else:
+                self.create_v_tunnel(down_stairs.y,player.y,down_stairs.x)
+                self.create_h_tunnel(down_stairs.x,player.x,player.y)
+
+    def place_room(self,room): #Place a room object on the map
+        for x in range(0,room.width-1):
+            for y in range(0,room.height-1):
+                self.tiles[x+room.x+1][y+room.y+1].blocked=room.grid[y][x]
+                self.tiles[x+room.x+1][y+room.y+1].block_sight=room.grid[y][x]
+                if room.grid[y][x]: #If the room object has a true at the location, it means an obstruction exists
+                    self.tiles[x+room.x+1][y+room.y+1].terrain='rubble'
+                else: #Otherwise, the tile is open ground
+                    self.tiles[x+room.x+1][y+room.y+1].terrain='ground'
 
     def create_h_tunnel(self,x1,x2,y):
         for x in range(min(x1,x2),max(x1,x2)+1):
             self.tiles[x][y].blocked=False
             self.tiles[x][y].block_sight=False
+            self.tiles[x][y].terrain='ground'
     
     def create_v_tunnel(self,y1,y2,x):
         for y in range(min(y1,y2),max(y1,y2)+1):
             self.tiles[x][y].blocked=False
             self.tiles[x][y].block_sight=False
+            self.tiles[x][y].terrain='ground'
 
     def place_entities(self,room,entities):
         max_enemies_per_room=from_dungeon_floor([[2,1],[3,4],[5,6]],self.floor)
@@ -126,52 +150,30 @@ class GameMap:
         }
 
         for i in range(number_of_enemies):
-            x=randint(room.x1+1,room.x2-1)
-            y=randint(room.y1+1,room.y2-1)
-            if not any([entity for entity in entities if entity.x==x and entity.y==y]):
+            x=randint(room.x+1,room.x+room.width-1)
+            y=randint(room.y+1,room.y+room.height-1)
+            if not any([entity for entity in entities if entity.x==x and entity.y==y]) and not self.is_blocked(x,y):
                 monster_choice=random_choice_from_dict(monster_chances)
                 if monster_choice=='orc':
-                    fighter_component=Fighter(health=20,defense=0,power=4,xp=35)
-                    ai_component=BasicMonster()
-
-                    enemy=Entity(x,y,'o',lc.desaturated_green,'Orc',blocks=True,
-                    render_order=RenderOrder.ACTOR,fighter=fighter_component,ai=ai_component)
-                
+                    enemy=loader_functions.jsonloaders.json_get_enemy('orc')
+                    enemy.x=x
+                    enemy.y=y
                 else:
-                    fighter_component=Fighter(health=30,defense=2,power=8,xp=100)
-                    ai_component=BasicMonster()
-
-                    enemy=Entity(x,y,'O',lc.darker_green,'Troll',blocks=True,
-                    render_order=RenderOrder.ACTOR,fighter=fighter_component,ai=ai_component)
+                    enemy=loader_functions.jsonloaders.json_get_enemy('troll')
+                    enemy.x=x
+                    enemy.y=y
                 
                 entities.append(enemy)
 
         for i in range(number_of_items):
-            x=randint(room.x1+1,room.x2-1)
-            y=randint(room.y1+1,room.y2-1)
+            x=randint(room.x+1,room.x+room.width-1)
+            y=randint(room.y+1,room.y+room.height-1)
 
-            if not any([entity for entity in entities if entity.x==x and entity.y==y]):
+            if not any([entity for entity in entities if entity.x==x and entity.y==y]) and not self.is_blocked(x,y):
                 item_choice=random_choice_from_dict(item_chances)
-
-                if item_choice=='healing_potion':
-                    item_component=Item(use_function=heal,amount=40)
-                    item=Entity(x,y,'{',lc.red,'Healing Potion',render_order=RenderOrder.ITEM,item=item_component)
-                elif item_choice=='sword':
-                    equip_component=Equip(EquipSlots.MAIN_HAND,power_bonus=3)
-                    item=Entity(x,y,'/',lc.sky,'Sword',equip=equip_component)
-                elif item_choice=='shield':
-                    equip_component=Equip(EquipSlots.OFF_HAND,defense_bonus=1)
-                    item=Entity(x,y,'G',lc.darker_orange,'Shield',equip=equip_component)
-                elif item_choice=='fireball_scroll':
-                    item_component=Item(use_function=cast_fireball,targeting=True,targeting_message=Message('Left click fireball target, right click to cancel.',lc.light_cyan),damage=25,radius=3)
-                    item=Entity(x,y,'}',lc.red,'Fireball Scroll',render_order=RenderOrder.ITEM,item=item_component)
-                elif item_choice=='confusion_scroll':
-                    item_component=Item(use_function=cast_confuse,targeting=True,targeting_message=Message('Left click an enemy to confuse it, right click to cancel.',lc.cyan))
-                    item=Entity(x,y,'}',lc.light_pink,'Confusion Scroll',render_order=RenderOrder.ITEM,item=item_component)
-                elif item_choice=='lightning_scroll':
-                    item_component=Item(use_function=cast_lightning,damage=40,maximum_range=5)
-                    item=Entity(x,y,'}',lc.yellow,'Lightning Scroll',render_order=RenderOrder.ITEM,item=item_component)
-
+                item=loader_functions.jsonloaders.json_get_item(item_choice)
+                item.x=x
+                item.y=y
                 entities.append(item)
 
     def is_blocked(self,x,y):

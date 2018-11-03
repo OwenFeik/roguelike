@@ -10,11 +10,6 @@ from components.item import Item
 from components.level import Level
 from components.stairs import Stairs
 
-
-
-#TODO: refactor initialisation to allow passing of a *args of components
-#TODO: 1 line if statements in JSON functions
-
 class Entity:
     def __init__(self,x,y,char,colour,name,blocks=False,render_order=RenderOrder.CORPSE,fighter=None,ai=None,item=None,inventory=None,stairs=None,level=None,equipment=None,equip=None):
         self.x=x
@@ -93,7 +88,7 @@ class Entity:
         render_order=RenderOrder(json_data.get('render_order'))
 
         fighter=Fighter.from_json(json_data.get('fighter')) if json_data.get('fighter') else None
-        ai=ai_from_json(json_data.get('ai')) if json_data.get('ai') else None            
+        ai=ai_from_json(json_data.get('ai')) if json_data.get('ai') else None
         item=Item.from_json(json_data.get('item')) if json_data.get('item') else None
         inventory=Inventory.from_json(json_data.get('inventory')) if json_data.get('inventory') else None
         stairs=Stairs.from_json(json_data.get('stairs')) if json_data.get('stairs') else None
