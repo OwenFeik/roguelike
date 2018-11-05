@@ -2,6 +2,7 @@ import libtcodpy as lc
 from enum import Enum,auto
 from gamestates import GameStates
 from menus import inventory_menu,level_up_menu,character_screen,loading_bar
+from random import randint
 
 class RenderOrder(Enum):
     STAIRS=auto()
@@ -32,7 +33,7 @@ def render_bar(panel,x,y,total_width,name,value,maximum,bar_colour,back_colour):
     lc.console_set_default_foreground(panel,lc.white)
     lc.console_print_ex(panel,int(x+total_width/2),y,lc.BKGND_NONE,lc.CENTER,'{0}: {1}/{2}'.format(name,value,maximum))
 
-def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_log,screen_width,screen_height,bar_width,panel_height,panel_y,mouse,colours,game_state):
+def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_log,screen_width,screen_height,bar_width,panel_height,panel_y,mouse,tile_data,game_state):
     
     if fov_recompute:
         for y in range(game_map.height):
@@ -41,10 +42,13 @@ def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_
                 wall=game_map.tiles[x][y].block_sight
 
                 if visible:
-                    lc.console_set_char_background(con,x,y,colours.get('light-'+game_map.tiles[x][y].terrain),lc.BKGND_SET)
+                    lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['light'],lc.BKGND_SET)
+                    lc.console_set_char_foreground(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['dark'])
+                    lc.console_set_char(con,x,y,chr(game_map.tiles[x][y].texture))
                     game_map.tiles[x][y].explored=True
                 elif game_map.tiles[x][y].explored:
-                    lc.console_set_char_background(con,x,y,colours.get('dark-'+game_map.tiles[x][y].terrain),lc.BKGND_SET)
+                    lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['dark'],lc.BKGND_SET)
+                    lc.console_set_char_foreground(con,x,y,lc.black)
 
     entities_in_render_order=sorted(entities,key=lambda x:x.render_order.value)
     for entity in entities_in_render_order:

@@ -1,12 +1,13 @@
 import json
+import os
 import libtcodpy as lc
 
 from entity import Entity #Load in entities from savegame and initialise enemies and items
 from gamemessages import MessageLog #Load messagelog from savegame
 from gamestates import GameStates #Load gamestate from savegame
 from map_objects.gamemap import GameMap #Load gamemap from savegame
-from map_objects.tile import Tile #Initialise tiles from json
 from menus import loading_bar #Show save progress
+from random import choice #Get a random object from a JSON file
 
 def json_save_game(player,entities,game_map,message_log,game_state,con,screen_width,screen_height):
     loading_bar(con,'Saving entities...',.1,screen_width,screen_height) #Show loading bar
@@ -38,6 +39,9 @@ def json_save_game(player,entities,game_map,message_log,game_state,con,screen_wi
     loading_bar(con,'Saving file...',.7,screen_width,screen_height) #Final loading bar update
     lc.console_flush()
     
+    if not os.path.exists('savegames'): #Create the saves folder if it doesn't exist
+        os.makedirs('savegames')
+    
     with open('savegames/save_game.json','w') as save_file: #Write JSON data to file
         json.dump(data,save_file,indent=4)
 
@@ -62,13 +66,17 @@ def json_load_game():
 def json_get_constants():
     with open('resources/constants.json','r') as constants_file:
         constants=json.load(constants_file)
-    with open('resources/colours.json','r') as colours_file:
-        colours_json=json.load(colours_file)
+    with open('resources/tiles.json','r') as tiles_file:
+        tiles_json=json.load(tiles_file)
     
-    colours={}
-    for colour in colours_json:
-        colours[colour]=lc.Color(colours_json[colour][0],colours_json[colour][1],colours_json[colour][2])
-    constants['colours']=colours
+    tile_data={}
+    for tile_type in tiles_json:
+        tile=tiles_json[tile_type]
+        tile['light']=lc.Color(tile['light'][0],tile['light'][1],tile['light'][2])
+        tile['dark']=lc.Color(tile['dark'][0],tile['dark'][1],tile['dark'][2])
+        tile_data[tile_type]=tile
+
+    constants['tile_data']=tile_data
     
     return constants
 
@@ -90,7 +98,7 @@ def json_get_item(item):
         found_item['y']=0
         return Entity.from_json(found_item)
 
-# def json_get_tile(preset):
-#     with open('resources/tiles.json','r') as f:
-#         tiles=json.load(f)
-#         return Tile.from_json(tiles[preset])
+def json_get_texture(terrain):
+    with open('resources/tiles.json','r') as f:
+        data=json.load(f)
+        return choice(data[terrain]['textures'])

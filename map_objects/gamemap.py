@@ -47,6 +47,10 @@ class GameMap:
         tiles=[[Tile(True,'wall') for y in range(self.height)]for x in range(self.width)]
         return tiles
 
+    def refresh_tiles(self):
+        for tile in self.tiles:
+            tile.reload_texture()
+
     def make_map(self,max_rooms,room_min_size,room_max_size,map_width,map_height,player,entities):
         rooms=[]
         num_rooms=0
@@ -119,18 +123,21 @@ class GameMap:
                     self.tiles[x+room.x+1][y+room.y+1].terrain='rubble'
                 else: #Otherwise, the tile is open ground
                     self.tiles[x+room.x+1][y+room.y+1].terrain='ground'
+                    self.tiles[x+room.x+1][y+room.y+1].texture=randint(21,23)
 
     def create_h_tunnel(self,x1,x2,y):
         for x in range(min(x1,x2),max(x1,x2)+1):
             self.tiles[x][y].blocked=False
             self.tiles[x][y].block_sight=False
             self.tiles[x][y].terrain='ground'
+            self.tiles[x][y].reload_texture()
     
     def create_v_tunnel(self,y1,y2,x):
         for y in range(min(y1,y2),max(y1,y2)+1):
             self.tiles[x][y].blocked=False
             self.tiles[x][y].block_sight=False
             self.tiles[x][y].terrain='ground'
+            self.tiles[x][y].reload_texture()
 
     def place_entities(self,room,entities):
         max_enemies_per_room=from_dungeon_floor([[2,1],[3,4],[5,6]],self.floor)
