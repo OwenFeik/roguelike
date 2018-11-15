@@ -1,6 +1,6 @@
-import json
-import os
-import libtcodpy as lc
+import json #interpret files opened
+import os #Check to make sure files exist
+import libtcodpy as lc #Show loading bar, initialise colours
 
 from entity import Entity #Load in entities from savegame and initialise enemies and items
 from gamemessages import MessageLog #Load messagelog from savegame
@@ -47,19 +47,19 @@ def json_save_game(player,entities,game_map,message_log,game_state,con,screen_wi
 
 def json_load_game():
     with open('savegames/save_game.json','r') as save_file:
-        data=json.load(save_file)
+        data=json.load(save_file) #Get save data
 
-    player_index=data['player_index']
+    player_index=data['player_index'] #Which entity is the player?
     entities_json=data['entities']
     game_map_json=data['game_map']
     message_log_json=data['message_log']
     game_state_json=data['game_state']
 
-    entities=[Entity.from_json(entity_json) for entity_json in entities_json]
-    player=entities[player_index]
+    entities=[Entity.from_json(entity_json) for entity_json in entities_json] #Initialise entities from json
+    player=entities[player_index] #Get the player from entities
     game_map=GameMap.from_json(game_map_json)
     message_log=MessageLog.from_json(message_log_json)
-    game_state=GameStates(game_state_json)
+    game_state=GameStates(game_state_json) #Get Enum from int
 
     return player,entities,game_map,message_log,game_state
 
@@ -70,11 +70,11 @@ def json_get_constants():
         tiles_json=json.load(tiles_file)
     
     tile_data={}
-    for tile_type in tiles_json:
+    for tile_type in tiles_json: #For each tile type in the JSON
         tile=tiles_json[tile_type]
-        tile['light']=lc.Color(tile['light'][0],tile['light'][1],tile['light'][2])
-        tile['dark']=lc.Color(tile['dark'][0],tile['dark'][1],tile['dark'][2])
-        tile_data[tile_type]=tile
+        tile['light']=lc.Color(tile['light'][0],tile['light'][1],tile['light'][2]) #Get the light texture, make colour
+        tile['dark']=lc.Color(tile['dark'][0],tile['dark'][1],tile['dark'][2]) #And the dark texture
+        tile_data[tile_type]=tile #And add them to the dict under the tile name
 
     constants['tile_data']=tile_data
     
@@ -98,7 +98,7 @@ def json_get_item(item):
         found_item['y']=0
         return Entity.from_json(found_item)
 
-def json_get_texture(terrain):
+def json_get_texture(terrain): #Get an int representing the character with the terrains texture
     with open('resources/tiles.json','r') as f:
         data=json.load(f)
         return choice(data[terrain]['textures'])

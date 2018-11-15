@@ -38,8 +38,8 @@ def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_
     if fov_recompute:
         for y in range(game_map.height):
             for x in range(game_map.width):
+                
                 visible=lc.map_is_in_fov(fov_map,x,y)
-                wall=game_map.tiles[x][y].block_sight
 
                 if visible:
                     lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['light'],lc.BKGND_SET)

@@ -48,8 +48,9 @@ class GameMap:
         return tiles
 
     def refresh_tiles(self):
-        for tile in self.tiles:
-            tile.reload_texture()
+        for row in self.tiles:
+            for tile in row:
+                tile.reload_texture()
 
     def make_map(self,max_rooms,room_min_size,room_max_size,map_width,map_height,player,entities):
         rooms=[]
@@ -113,6 +114,8 @@ class GameMap:
             else:
                 self.create_v_tunnel(down_stairs.y,player.y,down_stairs.x)
                 self.create_h_tunnel(down_stairs.x,player.x,player.y)
+
+        self.refresh_tiles()
 
     def place_room(self,room): #Place a room object on the map
         for x in range(0,room.width-1):

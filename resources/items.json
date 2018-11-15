@@ -1,6 +1,6 @@
 {
     "healing_potion": {
-        "char": "{",
+        "char": 2,
         "colour": [
             255,
             0,
