@@ -52,7 +52,7 @@ class GameMap:
             for tile in row:
                 tile.reload_texture()
 
-    def make_map(self,max_rooms,room_min_size,room_max_size,map_width,map_height,player,entities):
+    def make_map(self,max_rooms,room_min_size,room_max_size,map_width,map_height,player,entities,tile_data):
         rooms=[]
         num_rooms=0
 
@@ -66,13 +66,14 @@ class GameMap:
             x=randint(0,map_width-w-1)
             y=randint(0,map_height-h-1)
 
-            new_room=Room(x,y,w,h)
+            # new_room=Room(x,y,w,h)
+            new_room=Room.make_circle_room(x,y,min(w,h))
 
             for other_room in rooms:
                 if new_room.intersect(other_room):
                     break
             else:
-                self.place_room(new_room)
+                self.place_room(new_room,tile_data)
                 (new_x,new_y)=new_room.center()
 
                 center_of_last_room_x=new_x
@@ -115,18 +116,10 @@ class GameMap:
                 self.create_v_tunnel(down_stairs.y,player.y,down_stairs.x)
                 self.create_h_tunnel(down_stairs.x,player.x,player.y)
 
-        self.refresh_tiles()
-
-    def place_room(self,room): #Place a room object on the map
+    def place_room(self,room,tiles): #Place a room object on the map
         for x in range(0,room.width-1):
             for y in range(0,room.height-1):
-                self.tiles[x+room.x+1][y+room.y+1].blocked=room.grid[y][x]
-                self.tiles[x+room.x+1][y+room.y+1].block_sight=room.grid[y][x]
-                if room.grid[y][x]: #If the room object has a true at the location, it means an obstruction exists
-                    self.tiles[x+room.x+1][y+room.y+1].terrain='rubble'
-                else: #Otherwise, the tile is open ground
-                    self.tiles[x+room.x+1][y+room.y+1].terrain='ground'
-                    self.tiles[x+room.x+1][y+room.y+1].texture=randint(21,23)
+                self.tiles[x+room.x+1][y+room.y+1]=Tile.from_json(tiles[room.grid[y][x]])
 
     def create_h_tunnel(self,x1,x2,y):
         for x in range(min(x1,x2),max(x1,x2)+1):
@@ -198,7 +191,7 @@ class GameMap:
         self.tiles=self.initialise_tiles()
         self.make_map(constants['max_rooms'],constants['room_min_size'],
             constants['room_max_size'],constants['map_width'],constants['map_height'],
-            player,entities)
+            player,entities,constants['tile_data'])
 
         player.fighter.heal(player.fighter.max_health // 2)
 

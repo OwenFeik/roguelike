@@ -37,7 +37,11 @@ class Tile:
         explored=json_data.get('explored')
         texture=json_data.get('texture')
 
-        tile=Tile(blocked,terrain,block_sight,texture)
+        if texture:
+            tile=Tile(blocked,terrain,block_sight,texture)
+        else:
+            tile=Tile(blocked,terrain,block_sight)
+
         if tile.explored:
             tile.explored=explored
 
