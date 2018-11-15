@@ -1,7 +1,7 @@
 import libtcodpy as lc
 from inputhandlers import handle_keys,handle_mouse,handle_main_menu
 from entity import get_blocking_entities_at_location
-from renderfunctions import render_all,clear_all
+from renderfunctions import render_all
 from fovfunctions import initialise_fov,recompute_fov
 from gamestates import GameStates
 from deathfunctions import kill_player,kill_enemy
@@ -100,8 +100,6 @@ def play_game(player,entities,game_map,message_log,game_state,con,panel,constant
         fov_recompute=False
         
         lc.console_flush()
-
-        clear_all(con,entities)
 
         action=handle_keys(key,game_state)
         mouse_action=handle_mouse(mouse)

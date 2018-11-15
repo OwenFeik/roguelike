@@ -35,6 +35,11 @@ def render_bar(panel,x,y,total_width,name,value,maximum,bar_colour,back_colour):
 
 def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_log,screen_width,screen_height,bar_width,panel_height,panel_y,mouse,tile_data,game_state):
     
+
+    entities_in_render_order=sorted(entities,key=lambda x:x.render_order.value)
+    for entity in entities_in_render_order:
+        draw_entity(con,entity,fov_map,game_map)
+
     if fov_recompute:
         for y in range(game_map.height):
             for x in range(game_map.width):
@@ -47,12 +52,10 @@ def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_
                     lc.console_set_char(con,x,y,chr(game_map.tiles[x][y].texture))
                     game_map.tiles[x][y].explored=True
                 elif game_map.tiles[x][y].explored:
+                    lc.console_put_char(con,x,y,chr(game_map.tiles[x][y].texture),lc.BKGND_NONE)
+                    lc.console_set_char(con,x,y,chr(game_map.tiles[x][y].texture))
                     lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['dark'],lc.BKGND_SET)
                     lc.console_set_char_foreground(con,x,y,lc.black)
-
-    entities_in_render_order=sorted(entities,key=lambda x:x.render_order.value)
-    for entity in entities_in_render_order:
-        draw_entity(con,entity,fov_map,game_map)
     
     lc.console_blit(con,0,0,screen_width,screen_height,0,0,0)
 
@@ -85,10 +88,6 @@ def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_
     elif game_state==GameStates.CHARACTER_SCREEN:
         character_screen(player,30,10,screen_width,screen_height)
 
-def clear_all(con,entities):
-    for entity in entities:
-        clear_entity(con,entity)
-
 def draw_entity(con,entity,fov_map,game_map):
     if lc.map_is_in_fov(fov_map,entity.x,entity.y):
         lc.console_set_default_foreground(con,entity.colour)
@@ -97,6 +96,3 @@ def draw_entity(con,entity,fov_map,game_map):
         dim_colour=lc.Color(entity.colour.r//2,entity.colour.g//2,entity.colour.b//2)
         lc.console_set_default_foreground(con,dim_colour)
         lc.console_put_char(con,entity.x,entity.y,entity.char,lc.BKGND_NONE)
-
-def clear_entity(con,entity):
-    lc.console_put_char(con,entity.x,entity.y,' ',lc.BKGND_NONE)

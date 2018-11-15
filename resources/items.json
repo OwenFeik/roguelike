@@ -19,7 +19,7 @@
         }
     },
     "fireball_scroll": {
-        "char": "}",
+        "char": 3,
         "colour": [
             255,
             0,
@@ -46,7 +46,7 @@
         }
     },
     "confusion_scroll": {
-        "char": "}",
+        "char": 3,
         "colour": [
             255,
             115,
@@ -71,7 +71,7 @@
         }
     },
     "lightning_scroll": {
-        "char": "}",
+        "char": 3,
         "colour": [
             255,
             255,

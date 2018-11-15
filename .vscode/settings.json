@@ -3,5 +3,6 @@
         "--disable=E1101",
         "--diable=C"
     ],
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.pythonPath": "C:\\Users\\Owen Feik\\AppData\\Local\\Programs\\Python\\Python36\\python.exe"
 }

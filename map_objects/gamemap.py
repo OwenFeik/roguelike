@@ -66,8 +66,10 @@ class GameMap:
             x=randint(0,map_width-w-1)
             y=randint(0,map_height-h-1)
 
-            # new_room=Room(x,y,w,h)
-            new_room=Room.make_circle_room(x,y,min(w,h))
+            if randint(0,1):
+                new_room=Room(x,y,w,h)
+            else:
+                new_room=Room.make_circle_room(x,y,min(w,h))
 
             for other_room in rooms:
                 if new_room.intersect(other_room):
