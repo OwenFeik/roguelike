@@ -1,5 +1,8 @@
 {
     "wall": {
+        "blocked": true,
+        "block_sight": true,
+        "terrain": "wall",
         "light": [
             65,
             75,
@@ -15,6 +18,9 @@
         ]
     },
     "ground": {
+        "blocked": false,
+        "block_sight": false,
+        "terrain": "ground",
         "light": [
             80,
             40,
@@ -32,6 +38,9 @@
         ]
     },
     "rubble":{
+        "blocked": true,
+        "block_sight": true,
+        "terrain": "rubble",
         "light": [
             150,
             150,

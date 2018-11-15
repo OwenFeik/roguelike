@@ -33,7 +33,7 @@ def get_game_variables(constants):
 
     game_map=GameMap(constants['map_width'],constants['map_height'])
     game_map.make_map(constants['max_rooms'],constants['room_min_size'],constants['room_max_size'],constants['map_width'],
-                    constants['map_height'],player,entities)
+                    constants['map_height'],player,entities,constants['tile_data'])
 
     message_log=MessageLog(constants['message_x'],constants['message_width'],constants['message_height'])
 
