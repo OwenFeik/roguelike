@@ -1,6 +1,6 @@
 import math
 import libtcodpy as lc
-from renderfunctions import RenderOrder
+from renderorder import RenderOrder
 from components.ai import ai_from_json
 from components.equip import Equip
 from components.equipment import Equipment
@@ -149,3 +149,9 @@ def get_blocking_entities_at_location(entities,destination_x,destination_y):
         if entity.blocks and entity.x==destination_x and entity.y==destination_y:
             return entity
     return None
+
+def stairs_location(entities):
+    for entity in entities:
+        if entity.stairs:
+            return entity.x,entity.y
+    

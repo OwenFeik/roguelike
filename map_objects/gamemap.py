@@ -66,7 +66,7 @@ class GameMap:
             x=randint(0,map_width-w-1)
             y=randint(0,map_height-h-1)
 
-            if randint(0,1):
+            if randint(0,1): #Make either a rectangular or circular room
                 new_room=Room(x,y,w,h)
             else:
                 new_room=Room.make_circle_room(x,y,min(w,h))

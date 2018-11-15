@@ -3,12 +3,8 @@ from enum import Enum,auto
 from gamestates import GameStates
 from menus import inventory_menu,level_up_menu,character_screen,loading_bar
 from random import randint
-
-class RenderOrder(Enum):
-    STAIRS=auto()
-    CORPSE=auto()
-    ITEM=auto()
-    ACTOR=auto()
+from entity import stairs_location
+from renderorder import RenderOrder
 
 def get_names_under_mouse(mouse,entities,fov_map):
     (x,y)=(mouse.cx,mouse.cy)
@@ -41,22 +37,28 @@ def render_all(con,panel,game_map,entities,player,fov_map,fov_recompute,message_
         draw_entity(con,entity,fov_map,game_map)
 
     if fov_recompute:
+        stairs_x,stairs_y=stairs_location(entities)
+
         for y in range(game_map.height):
             for x in range(game_map.width):
-                
-                visible=lc.map_is_in_fov(fov_map,x,y)
 
-                if visible:
-                    lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['light'],lc.BKGND_SET)
-                    lc.console_set_char_foreground(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['dark'])
-                    lc.console_set_char(con,x,y,chr(game_map.tiles[x][y].texture))
-                    game_map.tiles[x][y].explored=True
-                elif game_map.tiles[x][y].explored:
-                    lc.console_put_char(con,x,y,chr(game_map.tiles[x][y].texture),lc.BKGND_NONE)
-                    lc.console_set_char(con,x,y,chr(game_map.tiles[x][y].texture))
-                    lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['dark'],lc.BKGND_SET)
-                    lc.console_set_char_foreground(con,x,y,lc.black)
-    
+
+                    visible=lc.map_is_in_fov(fov_map,x,y)
+
+                    if visible:
+                        lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['light'],lc.BKGND_SET)
+                        if not (y==stairs_y and x==stairs_x):
+                            lc.console_set_char_foreground(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['dark'])
+                            lc.console_set_char(con,x,y,chr(game_map.tiles[x][y].texture))
+                        game_map.tiles[x][y].explored=True
+                    elif game_map.tiles[x][y].explored:
+                        # lc.console_put_char(con,x,y,chr(game_map.tiles[x][y].texture),lc.BKGND_NONE)
+                        
+                        lc.console_set_char_background(con,x,y,tile_data.get(game_map.tiles[x][y].terrain)['dark'],lc.BKGND_SET)
+                        if not (y==stairs_y and x==stairs_x):
+                            lc.console_set_char_foreground(con,x,y,lc.black)
+                            lc.console_set_char(con,x,y,chr(game_map.tiles[x][y].texture))
+
     lc.console_blit(con,0,0,screen_width,screen_height,0,0,0)
 
     lc.console_set_default_background(panel,lc.black)
